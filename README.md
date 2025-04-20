@@ -16,6 +16,8 @@ A comprehensive guide to running Large Language Models (LLMs) on your local mach
   - [HuggingFace Transformers - Quantized (BitsAndBytes)](#huggingface-transformers---quantized-bitsandbytes)
   - [TorchAO](#torchao)
   - [vLLM](#vllm)
+  - [GPT-NeoX] (#GPT-Neox)
+  - [Triton] - (# Triton Inference Server TensorRT backend)
   - [LM Studio](#lm-studio)
 - [Performance Comparison](#performance-comparison)
 - [Contributing](#contributing)
@@ -238,6 +240,89 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 - Hardware-specific optimizations
 - Compatible with PyTorch ecosystem
 - Flexible configuration options
+
+
+### GPT-NeoX - (#GPT-Neox)
+
+GPT-NeoX is a series of models developed by EleutherAI and
+built using a modified version of Megatron. It offers various
+sizes, ranging from 20B to 100B parameters.
+
+#### Installation
+
+```bash
+pip install gpt-neo
+```
+
+#### Usage
+
+```python
+from gpt_neo import GPTPredictor
+from gpt_neo.utils import download_model
+
+# Download the model (requires EleutherAI auth token)
+download_model("gpt-neo-2.7B")  # Change the model size as
+needed
+
+# Load and initialize the model predictor
+predictor = GPTPredictor.from_pretrained("gpt-neo-2.7B",
+device="cuda:0")
+
+# Generate text
+inputs = "Write a short story about:"
+outputs = predictor(inputs, max_length=100)
+print(outputs["text"])
+```
+
+#### Advantages
+
+- Large model capacity
+- Open source and transparent development
+- Supports multiple architectures (e.g., BERT, Megatron)
+- Strong performance on various tasks
+
+
+### Triton Inference Server (TensorRT backend)
+
+Triton Inference Server is an open-source, extensible, and
+customizable AI inferencing server developed by NVIDIA. It
+supports a wide variety of models, including LLMs like BERT,
+RoBERTa, DistilBert, and Electra, among others.
+
+
+#### Installation 
+
+1. Install Triton Inference Server: Follow the instructions
+for [installing Triton Inference
+Server](https://github.com/NVIDIA/Triton/blob/main/docs/quicksServer](https://github.com/NVDIA/Triton/blob/main/docs/quickstarts/quickstart-docker.md).
+
+
+#### Usage
+
+1. Prepare the model: Convert your Hugging Face Transformers
+model to an ONNX format using [the ONNX model
+converter](https://github.com/onnx/onnx/blob/master/tools/onnxconverter](https//github.com/onnx/onnx/blob/master/tools/onnxtools/README.md).
+2. Export the ONNX model for TensorRT: Use the [TensorRT
+optimizer](https://github.com/NVIDIA/TF-TRT) to convert your
+ONNX model to a TensorRT engine.
+3. Deploy the model in Triton Inference Server: Create and
+configure a `model_config.pbtxt` file for your model. Then,
+create and register a Triton model server with the
+configuration file and the TensorRT engine.
+4. Use the model in your application: Integrate Triton
+Inference Server into your application using the Triton
+Inference Client Library or any other method that suits your
+needs.
+
+
+#### Advantages
+
+- High performance through the use of TensorRT optimizations
+- Flexible deployment options (e.g., on-premises, in the
+cloud)
+- Supports a wide variety of models and customization
+- Efficient handling of multiple models at scale
+
 
 ### vLLM
 
